@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InkVerse | Complete Creative Prototype Workspace</title>
+    <!-- Premium Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* CSS Core Variable System - Dynamic Themes */
+        :root {
+            --bg-main: #fcfbf9;
+            --bg-card: #ffffff;
+            --bg-nav: rgba(252, 251, 249, 0.85);
+            --text-main: #1a1917;
+            --text-muted: #6b6760;
+            --accent: #8c764f;
+            --accent-soft: #f4efe6;
+            --border: #e8e3da;
+            --shadow: 0 4px 24px rgba(26, 25, 23, 0.04);
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-sans: 'Plus Jakarta Sans', sans-serif;
+            --radius: 16px;
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --reader-font-size: 1.35rem;
+        }
+
+        [data-theme="dark"] {
+            --bg-main: #0d0d0c;
+            --bg-card: #141413;
+            --bg-nav: rgba(13, 13, 12, 0.85);
+            --text-main: #f2effa;
+            --text-muted: #9c978e;
+            --accent: #d4be96;
+            --accent-soft: #24221f;
+            --border: #292724;
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .app-container {
+            max-width: 1050px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 40px;
+        }
+
+        /* Sticky Sidebar Navigation */
+        aside {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            padding: 40px 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-right: 1px solid var(--border);
+        }
+
+        .brand-logo {
+            font-family: var(--font-serif);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-main);
+            text-decoration: none;
+            letter-spacing: -0.5px;
+            margin-bottom: 40px;
+            display: block;
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .nav-item {
+            cursor: pointer;
+        }
+
+        .nav-item a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 1rem;
+            padding: 10px 14px;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .nav-item:hover a, .nav-item.active a {
+            color: var(--text-main);
+            background-color: var(--accent-soft);
+        }
+
+        .nav-item svg {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+        }
+
+        .theme-toggle-btn {
+            background: none;
+            border: 1px solid var(--border);
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            color: var(--text-main);
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .theme-toggle-btn:hover {
+            background-color: var(--accent-soft);
+        }
+
+        /* Main Container Framework */
+        main {
+            padding: 40px 0;
+            width: 100%;
+        }
+
+        .view-section {
+            display: none;
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        .view-section.active-view {
+            display: block;
+        }
+
+        /* --- FEED MODULE STYLING --- */
+        .stories-tray {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border);
+        }
+        .stories-tray::-webkit-scrollbar { display: none; }
+
+        .story-circle {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .story-avatar-ring {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+            padding: 2px;
+        }
+
+        .story-avatar-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .story-label { font-size: 0.75rem; color: var(--text-muted); }
+
+        .post-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .post-header { display: flex; justify-content: space-between; margin-bottom: 16px; }
+        .author-meta { display: flex; align-items: center; gap: 12px; }
+        .author-pic { width: 38px; height: 38px; border-radius: 50%; background-color: var(--accent-soft); display: flex; align-items: center; justify-content: center; font-weight: 600; }
+        .author-info h4 { font-size: 0.95rem; font-weight: 600; }
+        .author-info span { font-size: 0.8rem; color: var(--text-muted); }
+        
+        .post-title { font-family: var(--font-serif); font-size: 1.75rem; margin-bottom: 8px; }
+        .post-type-badge { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; background-color: var(--accent-soft); color: var(--accent); padding: 4px 10px; border-radius: 20px; font-weight: 600; display: inline-block; margin-bottom: 15px; }
+        .post-content { font-family: var(--font-serif); font-size: 1.25rem; line-height: 1.8; white-space: pre-line; margin-bottom: 20px; }
+
+        .post-actions { display: flex; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 15px; }
+        .action-trigger { background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; color: var(--text-muted); font-size: 0.85rem; }
+        .action-trigger svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; }
+        .action-trigger.active-state { color: #d93838; }
+        .action-trigger.active-state svg { fill: #d93838; stroke: #d93838; }
+
+        /* --- BOOKS MODULE STYLING --- */
+        .section-header-title {
+            font-family: var(--font-serif);
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+        }
+
+        .section-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+        }
+
+        .books-grid-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .book-dashboard-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: var(--transition);
+        }
+
+        .book-dashboard-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+        }
+
+        .book-visual-mock {
+            height: 180px;
+            background: linear-gradient(135deg, #2c2722 0%, #1a1613 100%);
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #ebdcb9;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 4px 8px 16px rgba(0,0,0,0.1);
+        }
+
+        .book-visual-mock h4 {
+            font-family: var(--font-serif);
+            font-size: 1.4rem;
+            margin-bottom: 6px;
+        }
+
+        .book-visual-mock p {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+        }
+
+        .book-stats-row {
+            display: flex;
+            gap: 16px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+
+        .book-action-btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .book-btn {
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: var(--transition);
+            border: 1px solid var(--border);
+            background: none;
+            color: var(--text-main);
+        }
+
+        .book-btn-primary {
+            background-color: var(--text-main);
+            color: var(--bg-card);
+            border: none;
+        }
+
+        .book-btn-primary:hover { background-color: var(--accent); }
+        
+        .book-btn-subbed {
+            background-color: var(--accent-soft);
+            color: var(--accent);
+            border-color: transparent;
+        }
+
+        /* --- CHAPTER DRAWER VIEW --- */
+        .chapter-list-layout {
+            margin-top: 30px;
+        }
+
+        .chapter-strip-row {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 18px 24px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .chapter-strip-row:hover {
+            border-color: var(--accent);
+            background-color: var(--accent-soft);
+        }
+
+        .chapter-meta-left h5 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .chapter-meta-left span {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .read-chapter-trigger-btn {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .back-nav-link {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--accent);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        /* --- EXPLORE MODULE STYLING --- */
+        .search-bar-wrapper {
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .search-input-field {
+            width: 100%;
+            padding: 14px 20px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background-color: var(--bg-card);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-input-field:focus {
+            border-color: var(--accent);
+            box-shadow: var(--shadow);
+        }
+
+        .explore-tag-cloud {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .explore-tag-chip {
+            padding: 8px 16px;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-muted);
+        }
+
+        .explore-tag-chip:hover, .explore-tag-chip.active-chip {
+            background-color: var(--text-main);
+            color: var(--bg-card);
+            border-color: var(--text-main);
+        }
+
+        /* --- WRITING STUDIO MODULE STYLING --- */
+        .editor-container-box {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .form-row-block {
+            margin-bottom: 20px;
+        }
+
+        .form-label-text {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .studio-input-text {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .studio-select-dropdown {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .studio-textarea-body {
+            width: 100%;
+            height: 250px;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
+            line-height: 1.6;
+            outline: none;
+            resize: vertical;
+        }
+
+        .editor-action-bar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+            margin-top: 10px;
+        }
+
+        /* --- IMMERSIVE READER MODULE STYLING --- */
+        .reader-viewport {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 20px 0 60px 0;
+        }
+
+        .reader-toolbar-settings {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 30px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+        }
+
+        .reader-tool-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .reader-tool-btn {
+            background: none;
+            border: none;
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+        .reader-tool-btn:hover {
+            background-color: var(--accent-soft);
+        }
+
+        .reader-progress-track {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .reader-text-canvas {
+            font-family: var(--font-serif);
+            font-size: var(--reader-font-size);
+            line-height: 1.85;
+            color: var(--text-main);
+            white-space: pre-line;
+            transition: font-size 0.2s ease;
+        }
+
+        .reader-text-canvas p {
+            margin-bottom: 24px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 800px) {
+            .app-container { grid-template-columns: 1fr; padding-bottom: 80px; }
+            aside {
+                position: fixed; bottom: 0; top: auto; left: 0; width: 100vw; height: 65px;
+                background-color: var(--bg-card); border-top: 1px solid var(--border); border-right: none;
+                padding: 10px; flex-direction: row; z-index: 1000;
+            }
+            .brand-logo, .theme-toggle-btn { display: none; }
+            .nav-menu { flex-direction: row; justify-content: space-around; width: 100%; }
+            main { padding-top: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Sidebar Shell -->
+        <aside>
+            <div>
+                <a href="#" class="brand-logo" onclick="switchView('feed-section')">InkVerse</a>
+                <ul class="nav-menu">
+                    <li class="nav-item active" id="nav-feed" onclick="switchView('feed-section')">
+                        <a href="#">
+                            <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                            Feed
+                        </a>
+                    </li>
+                    <li class="nav-item" id="nav-books" onclick="switchView('books-section')">
+                        <a href="#">
+                            <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20M4 19.5V3a1 1 0 0 1 1-1h15v20H5.5A2.5 2.5 0 0 1 4 19.5z"/></svg>
+                            Books
+                        </a>
+                    </li>
+                    <li class="nav-item" id="nav-explore" onclick="switchView('explore-section')">
+                        <a href="#">
+                            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            Explore
+                        </a>
+                    </li>
+                    <li class="nav-item" id="nav-studio" onclick="switchView('studio-section')">
+                        <a href="#">
+                            <svg viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                            Studio
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <button class="theme-toggle-btn" onclick="toggleTheme()" title="Switch Aesthetics">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+        </aside>
+
+        <!-- Dynamic Main Workspace Framework -->
+        <main>
+            
+            <!-- SECTION 1: FEED VIEW LAYER -->
+            <div id="feed-section" class="view-section active-view">
+                <div class="stories-tray">
+                    <div class="story-circle"><div class="story-avatar-ring"><div class="story-avatar-inner">My Ink</div></div><span class="story-label">Progress</span></div>
+                    <div class="story-circle"><div class="story-avatar-ring"><div class="story-avatar-inner">AF</div></div><span class="story-label">@firdaus</span></div>
+                </div>
+
+                <div class="feed-stream" id="main-feed-stream">
+                    <!-- Standard Starting Post Layout -->
+                    <article class="post-card">
+                        <div class="post-header">
+                            <div class="author-meta">
+                                <div class="author-pic">AF</div>
+                                <div class="author-info">
+                                    <h4>Adepoju Firdaus</h4>
+                                    <span>@firdaus • 2h ago</span>
+                                </div>
+                            </div>
+                        </div>
+                        <span class="post-type-badge">Poetry</span>
+                        <h2 class="post-title">Patterns in the Room</h2>
+                        <div class="post-content">We trace lines on the structural blueprint,
+                        watching space fold into modern architecture.
+                        Every silence is a framework we built,
+                        waiting for the words to change the design.</div>
+                        <div class="post-actions">
+                            <button class="action-trigger" onclick="this.classList.toggle('active-state')">
+                                <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.5 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                                <span>84</span>
+                            </button>
+                        </div>
+                    </article>
+                </div>
+            </div>
+
+            <!-- SECTION 2: SERIALIZED LIBRARY OVERVIEW VIEW -->
+            <div id="books-section" class="view-section">
+                <h2 class="section-header-title">My Serialized Archives</h2>
+                <p class="section-subtitle">Subscribe to individual projects to instantly receive notifications as chapters are drop-released.</p>
+                
+                <div class="books-grid-layout">
+                    <!-- Book Card Entry 1 -->
+                    <div class="book-dashboard-card">
+                        <div>
+                            <div class="book-visual-mock">
+                                <h4>PATTERNS</h4>
+                                <p>Adepoju Firdaus</p>
+                            </div>
+                            <div class="book-stats-row">
+                                <span><strong>3</strong> Chapters</span>
+                                <span><strong>4.2k</strong> Reads</span>
+                            </div>
+                        </div>
+                        <div class="book-action-btn-group">
+                            <button class="book-btn book-btn-primary" onclick="openBookIndex('Patterns')">View Index</button>
+                            <button class="book-btn" id="sub-btn-patterns" onclick="toggleSubscription('patterns')">Subscribe</button>
+                        </div>
+                    </div>
+
+                    <!-- Book Card Entry 2 -->
+                    <div class="book-dashboard-card">
+                        <div>
+                            <div class="book-visual-mock" style="background: linear-gradient(135deg, #1b262c 0%, #0f4c75 100%);">
+                                <h4>THE SILENT MOON</h4>
+                                <p>Adepoju Firdaus</p>
+                            </div>
+                            <div class="book-stats-row">
+                                <span><strong>4</strong> Chapters</span>
+                                <span><strong>8.9k</strong> Reads</span>
+                            </div>
+                        </div>
+                        <div class="book-action-btn-group">
+                            <button class="book-btn book-btn-primary" onclick="openBookIndex('Silent Moon')">View Index</button>
+                            <button class="book-btn" id="sub-btn-moon" onclick="toggleSubscription('moon')">Subscribe</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 3: SPECIFIC CHAPTER INDEX DRAWER LAYOUT -->
+            <div id="chapter-index-section" class="view-section">
+                <button class="back-nav-link" onclick="switchView('books-section')">← Back to Library</button>
+                <h2 class="section-header-title" id="index-title-display">Book Title Here</h2>
+                <p class="section-subtitle">Select a chapter below to jump straight into the reading system viewport layout.</p>
+                
+                <div class="chapter-list-layout" id="chapter-list-container">
+                    <!-- Generated dynamically via JS -->
+                </div>
+            </div>
+
+            <!-- SECTION 4: EXPLORE AND DISCOVER INTERFACE -->
+            <div id="explore-section" class="view-section">
+                <h2 class="section-header-title">Discover Creative Content</h2>
+                <p class="section-subtitle">Search index works or filter entries by specific production creative tags.</p>
+                
+                <div class="search-bar-wrapper">
+                    <input type="text" class="search-input-field" placeholder="Search titles, authors, or ideas..." oninput="handleSearch(this.value)">
+                </div>
+
+                <div class="explore-tag-cloud">
+                    <span class="explore-tag-chip active-chip" onclick="filterByTag('All', this)">All Categories</span>
+                    <span class="explore-tag-chip" onclick="filterByTag('Poetry', this)">Poetry</span>
+                    <span class="explore-tag-chip" onclick="filterByTag('Fiction', this)">Fiction</span>
+                    <span class="explore-tag-chip" onclick="filterByTag('Drama', this)">Drama</span>
+                    <span class="explore-tag-chip" onclick="filterByTag('Non-Fiction', this)">Non-Fiction</span>
+                </div>
+
+                <div class="books-grid-layout" id="explore-results-grid">
+                    <!-- Dynamic Search Results Render Outputs Here -->
+                </div>
+            </div>
+
+            <!-- SECTION 5: WRITING STUDIO DASHBOARD MODULE -->
+            <div id="studio-section" class="view-section">
+                <h2 class="section-header-title">Writing Studio</h2>
+                <p class="section-subtitle">Draft custom entries, structure stanzas or chapters, and instantly publish entries inside the client view state.</p>
+                
+                <div class="editor-container-box">
+                    <div class="form-row-block">
+                        <label class="form-label-text">Content Title</label>
+                        <input type="text" id="editor-title" class="studio-input-text" placeholder="Name your project piece...">
+                    </div>
+
+                    <div class="form-row-block">
+                        <label class="form-label-text">Creative Category / Tag</label>
+                        <select id="editor-tag" class="studio-select-dropdown">
+                            <option value="Poetry">Poetry Style Layout</option>
+                            <option value="Fiction">Fiction Narrative Chunk</option>
+                            <option value="Drama">Drama Script Snippet</option>
+                            <option value="Non-Fiction">Non-Fiction Perspective</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row-block">
+                        <label class="form-label-text">Composition Body Space</label>
+                        <textarea id="editor-body" class="studio-textarea-body" placeholder="Begin typing your masterpiece creative work lines here..."></textarea>
+                    </div>
+
+                    <div class="editor-action-bar">
+                        <button class="book-btn" onclick="clearStudioFields()">Clear Draft</button>
+                        <button class="book-btn book-btn-primary" onclick="publishStudioContent()">Publish Stream Update</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 6: IMMERSIVE READING MODE VIEWPORT LAYOUT -->
+            <div id="reader-viewport-section" class="view-section">
+                <button class="back-nav-link" id="reader-back-btn" onclick="switchView('books-section')">← Exit Reader</button>
+                
+                <div class="reader-viewport">
+                    <div class="reader-toolbar-settings">
+                        <div class="reader-tool-group">
+                            <button class="reader-tool-btn" onclick="adjustTextSize(-0.1)" title="Decrease Typography Size">A-</button>
+                            <button class="reader-tool-btn" onclick="adjustTextSize(0.1)" title="Increase Typography Size">A+</button>
+                        </div>
+                        <div class="reader-progress-track" id="reader-meta-display">
+                            Reading Frame Active
+                        </div>
+                    </div>
+
+                    <h1 class="post-title" id="reader-title-display" style="font-size: 2.6rem; margin-bottom: 24px;">Chapter Title Display</h1>
+                    <div class="reader-text-canvas" id="reader-body-display">
+                        <!-- Content rendered dynamically -->
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Interface View Control Application State Matrix Logic Scripts -->
+    <script>
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            if (currentTheme === 'dark') document.documentElement.removeAttribute('data-theme');
+            else document.documentElement.setAttribute('data-theme', 'dark');
+        }
+
+        function switchView(viewId) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active-view'));
+            document.getElementById(viewId).classList.add('active-view');
+
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            if(viewId === 'feed-section') document.getElementById('nav-feed').classList.add('active');
+            if(viewId === 'books-section') document.getElementById('nav-books').classList.add('active');
+            if(viewId === 'studio-section') document.getElementById('nav-studio').classList.add('active');
+            if(viewId === 'explore-section') {
+                document.getElementById('nav-explore').classList.add('active');
+                renderExploreGrid(exploreDatabase); 
+            }
+        }
+
+        let readerFontSize = 1.35;
+        function adjustTextSize(amount) {
+            readerFontSize += amount;
+            if (readerFontSize < 1.0) readerFontSize = 1.0;
+            if (readerFontSize > 1.8) readerFontSize = 1.8;
+            document.documentElement.style.setProperty('--reader-font-size', `${readerFontSize}rem`);
+        }
+
+        const bookDatabase = {
+            'Patterns': [
+                { id: 1, title: 'Chapter 1: The First Design Sketch', time: '5 min read', body: 'We trace lines on the structural blueprint,\nwatching space fold into modern architecture.\nEvery silence is a framework we built,\nwaiting for the words to change the design.\n\nLines cross, intersecting paths where creative concepts converge. The first draft is rarely the clean execution, but a collection of maps showing exactly where the concept wanted to go before it found structure.' },
+                { id: 2, title: 'Chapter 2: Structural Proximity Lines', time: '8 min read', body: 'Distance is measured not in inches, but in intent.\n\nWhen we pull walls close, the room feels urgent. When we extend the borders, the draft grows sparse. In this entry, the design patterns reflect proximity—the spaces between friendship, between architectural elements, and between the lines of a stanza.' },
+                { id: 3, title: 'Chapter 3: Redesigning Boundaries', time: '6 min read', body: 'The blueprint demands reconstruction.\n\nWhat happens when the walls no longer frame the purpose? We tear down the partitions, scrubbing the canvas clean until only structural essentials remain. This is the boundary line redefined.' }
+            ],
+            'Silent Moon': [
+                { id: 1, title: 'Chapter 1: Coastal Ash Layer', time: '7 min read', body: 'The horizon was standard slate gray when the architecture first changed.\n\nSilently, ash blanketed the exterior scaffolding. He looked down at the design sheets, realizing the structure would have to hold much more weight than the initial drafts accounted for.' },
+                { id: 2, title: 'Chapter 2: Melting Security Locks', time: '9 min read', body: 'Heat rose through the lower access tunnels.\n\nEvery security seal gave way sequentially. There was no sound, only the faint distortion of modern metal running liquid under high-key exposure.' },
+                { id: 3, title: 'Chapter 3: Blue Blueprint Architecture', time: '12 min read', body: 'Under neon lines, the alternative schematic hummed.\n\nIt layout configurations standard tools couldn\'t read. The blueprint wasn\'t printed; it was projected directly into the physical space.' },
+                { id: 4, title: 'Chapter 4: The Architect\'s Vault Room', time: '6 min read', body: 'The boy was still in the hospital. The entire thing was in the hospital.\n\nHe watched the digital terminal by the bedside track the structural diagnostics of the compound miles away. The blueprint was safe, hidden away in a safe space he controlled entirely from this sterile room.' }
+            ]
+        };
+
+        const exploreDatabase = [
+            { title: 'Patterns', author: 'Adepoju Firdaus', type: 'Poetry', gradient: 'linear-gradient(135deg, #2c2722 0%, #1a1613 100%)', stats: '3 Chapters • 4.2k Reads' },
+            { title: 'The Silent Moon', author: 'Adepoju Firdaus', type: 'Fiction', gradient: 'linear-gradient(135deg, #1b262c 0%, #0f4c75 100%)', stats: '4 Chapters • 8.9k Reads' },
+            { title: 'Campus Lines', author: 'Friend Circle Arts', type: 'Drama', gradient: 'linear-gradient(135deg, #3d243c 0%, #1e121e 100%)', stats: '8 Chapters • 12k Reads' },
+            { title: 'Laws of Friendship', author: 'Anonymous Creator', type: 'Non-Fiction', gradient: 'linear-gradient(135deg, #162421 0%, #29433e 100%)', stats: 'Draft Ebook • 1.1k Reads' }
+        ];
+
+        let currentExploreTag = 'All';
+        let currentSearchQuery = '';
+
+        function renderExploreGrid(dataset) {
+            const targetGrid = document.getElementById('explore-results-grid');
+            targetGrid.innerHTML = '';
+            
+            if(dataset.length === 0) {
+                targetGrid.innerHTML = `<p style="color: var(--text-muted); grid-column: 1/-1; text-align: center; padding: 40px 0;">No collections match your criteria.</p>`;
+                return;
+            }
+
+            dataset.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'book-dashboard-card';
+                card.innerHTML = `
+                    <div>
+                        <div class="book-visual-mock" style="background: ${item.gradient || 'linear-gradient(135deg, #4b443c 0%, #282421 100%)'};">
+                            <h4>${item.title.toUpperCase()}</h4>
+                            <p>${item.author}</p>
+                        </div>
+                        <span class="post-type-badge">${item.type}</span>
+                        <div class="book-stats-row" style="margin-top: 10px;">
+                            <span>${item.stats}</span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <button class="book-btn book-btn-primary" style="width: 100%;" onclick="openBookIndex('${item.title}')">View Entry</button>
+                    </div>
+                `;
+                targetGrid.appendChild(card);
+            });
+        }
+
+        function filterByTag(tag, contextBtn) {
+            document.querySelectorAll('.explore-tag-chip').forEach(el => el.classList.remove('active-chip'));
+            contextBtn.classList.add('active-chip');
+            currentExploreTag = tag;
+            executeCombinedFilter();
+        }
+
+        function handleSearch(val) {
+            currentSearchQuery = val.toLowerCase().trim();
+            executeCombinedFilter();
+        }
+
+        function executeCombinedFilter() {
+            const filtered = exploreDatabase.filter(item => {
+                const matchesTag = (currentExploreTag === 'All' || item.type === currentExploreTag);
+                const matchesSearch = item.title.toLowerCase().includes(currentSearchQuery) || 
+                                      item.author.toLowerCase().includes(currentSearchQuery) ||
+                                      item.type.toLowerCase().includes(currentSearchQuery);
+                return matchesTag && matchesSearch;
+            });
+            renderExploreGrid(filtered);
+        }
+
+        let lastBookKey = 'Patterns';
+
+        function openBookIndex(bookKey) {
+            // Check if book exists in db; if not fallback safely
+            if (!bookDatabase[bookKey]) {
+                alert(`Details for "${bookKey}" are modularly simulated. Broad archive access complete!`);
+                return;
+            }
+
+            lastBookKey = bookKey;
+            const titleDisplay = document.getElementById('index-title-display');
+            const container = document.getElementById('chapter-list-container');
+            
+            titleDisplay.innerText = bookKey;
+            container.innerHTML = ''; 
+
+            const chapters = bookDatabase[bookKey] || [];
+            chapters.forEach((ch, idx) => {
+                const strip = document.createElement('div');
+                strip.className = 'chapter-strip-row';
+                strip.onclick = () => loadChapterIntoReader(bookKey, idx);
+                
+                strip.innerHTML = `
+                    <div class="chapter-meta-left">
+                        <h5>${ch.title}</h5>
+                        <span>${ch.time}</span>
+                    </div>
+                    <span class="read-chapter-trigger-btn">Read Entry →</span>
+                `;
+                container.appendChild(strip);
+            });
+
+            switchView('chapter-index-section');
+        }
+
+        function loadChapterIntoReader(bookKey, chapterIndex) {
+            const chapter = bookDatabase[bookKey][chapterIndex];
+            
+            document.getElementById('reader-title-display').innerText = chapter.title;
+            document.getElementById('reader-body-display').innerText = chapter.body;
+            document.getElementById('reader-meta-display').innerText = `${bookKey} • ${chapter.time}`;
+            
+            // Wire back button context to return to the active index instead of the global library
+            document.getElementById('reader-back-btn').onclick = () => openBookIndex(bookKey);
+
+            switchView('reader-viewport-section');
+        }
+
+        const subscriptionState = { patterns: false, moon: false };
+        function toggleSubscription(idKey) {
+            subscriptionState[idKey] = !subscriptionState[idKey];
+            const targetBtn = document.getElementById(`sub-btn-${idKey === 'patterns' ? 'patterns' : 'moon'}`);
+            
+            if(subscriptionState[idKey]) {
+                targetBtn.innerText = 'Subscribed ✓';
+                targetBtn.className = 'book-btn book-btn-subbed';
+            } else {
+                targetBtn.innerText = 'Subscribe';
+                targetBtn.className = 'book-btn';
+            }
+        }
+
+        /* --- WRITING STUDIO ACTION ENGINE SCRIPTS --- */
+        function clearStudioFields() {
+            document.getElementById('editor-title').value = '';
+            document.getElementById('editor-body').value = '';
+        }
+
+        function publishStudioContent() {
+            const titleVal = document.getElementById('editor-title').value.trim();
+            const tagVal = document.getElementById('editor-tag').value;
+            const bodyVal = document.getElementById('editor-body').value.trim();
+
+            if(!titleVal || !bodyVal) {
+                alert('Please give your creative piece a title and write down content body text before publishing!');
+                return;
+            }
+
+            // 1. Inject into feed stream
+            const feedStream = document.getElementById('main-feed-stream');
+            const newCard = document.createElement('article');
+            newCard.className = 'post-card';
+            newCard.innerHTML = `
+                <div class="post-header">
+                    <div class="author-meta">
+                        <div class="author-pic">AF</div>
+                        <div class="author-info">
+                            <h4>Adepoju Firdaus</h4>
+                            <span>@firdaus • Just now</span>
+                        </div>
+                    </div>
+                </div>
+                <span class="post-type-badge">${tagVal}</span>
+                <h2 class="post-title">${titleVal}</h2>
+                <div class="post-content">${bodyVal}</div>
+                <div class="post-actions">
+                    <button class="action-trigger" onclick="this.classList.toggle('active-state')">
+                        <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.5 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                        <span>0</span>
+                    </button>
+                </div>
+            `;
+            feedStream.insertBefore(newCard, feedStream.firstChild.nextSibling);
+
+            // 2. Map dynamically to the internal bookDatabase so it is fully readable via Index selections
+            if (!bookDatabase[titleVal]) {
+                bookDatabase[titleVal] = [];
+            }
+            bookDatabase[titleVal].push({
+                id: bookDatabase[titleVal].length + 1,
+                title: `Entry Chapter: Vol I`,
+                time: '4 min read',
+                body: bodyVal
+            });
+
+            // 3. Add into structural local search database array repository
+            exploreDatabase.push({
+                title: titleVal,
+                author: 'Adepoju Firdaus',
+                type: tagVal,
+                gradient: 'linear-gradient(135deg, #574f46 0%, #36312b 100%)',
+                stats: '1 Entry Chapter • 0 Reads'
+            });
+
+            clearStudioFields();
+            alert('Your piece has been successfully published straight into your live application view feed layout!');
+            switchView('feed-section');
+        }
+    </script>
+</body>
+</html>
